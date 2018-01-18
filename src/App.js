@@ -49,6 +49,7 @@ class Metronome extends Component {
     };
     this.runMetronome = this.runMetronome.bind(this);
     this.changeBpm = this.changeBpm.bind(this);
+    this.playClick = this.playClick.bind(this);
   }
 
   runMetronome(){
@@ -79,6 +80,10 @@ class Metronome extends Component {
       clearInterval(clickPlayer);
     }
 
+  }
+
+  playClick(){
+    
   }
 
   changeBpm(e){
