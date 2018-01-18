@@ -45,7 +45,7 @@ class Metronome extends Component {
     super(props);
     this.state = {
       isMetronomeOn: false,
-      currentBpm: 60
+      currentBpm: 88
     };
     this.runMetronome = this.runMetronome.bind(this);
     this.changeBpm = this.changeBpm.bind(this);
@@ -55,6 +55,30 @@ class Metronome extends Component {
     this.setState(prevState => ({
       isMetronomeOn: !prevState.isMetronomeOn
     }));
+
+    var clickInterval = (60 / this.state.currentBpm)*1000;
+    var clickPlayer;
+
+    {/*
+      am going to try messing with this
+
+      var clickPlayer = setInterval(function() {
+        if (!this.state.isMetronomeOn) clearInterval(clickPlayer); 
+      }, clickInterval);
+
+    */}
+
+
+    if (!this.state.isMetronomeOn) {
+      console.log('metronome is playing at '+ this.state.currentBpm + ' which is every '+clickInterval+' ms');
+      clickPlayer = setInterval(function(){console.log('click');}, clickInterval);
+      console.log(clickPlayer);
+    } else {
+      console.log('metronome should stop');
+      console.log(clickInterval);
+      clearInterval(clickPlayer);
+    }
+
   }
 
   changeBpm(e){
@@ -64,28 +88,13 @@ class Metronome extends Component {
   render() {
 
     return (
-      <div>
+      <div className="metronome-wrapper">
         <div className="status">
         Metronome is {this.state.isMetronomeOn ? 'On' : 'Off'}<br />
         bpm is set to: {this.state.currentBpm}
         </div>
         <div className="metronomer">
           <MetronomeSwitch toggleAction={this.runMetronome} metronomeState={this.state.isMetronomeOn} />
-
-          {/*
-
-          this part works, but I want to generate each tempo marker/button from a set list of tempos.
-          ugh i lost the click even when i got tempolist to render tempos.
-          this is not fun fun.
-
-          <Tempos setBpm={this.changeBpm} bpm="60" />
-          <Tempos setBpm={this.changeBpm} bpm="72" />
-          <Tempos setBpm={this.changeBpm} bpm="80" />
-          <Tempos setBpm={this.changeBpm} bpm="92" />
-          <Tempos setBpm={this.changeBpm} bpm="112" />
-          <Tempos setBpm={this.changeBpm} bpm="120" />          
-
-          */}
 
           <TempoList setBpm={this.changeBpm} />
 

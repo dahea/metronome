@@ -22,6 +22,12 @@
   font-size: large;
 }
 
+.metronome-wrapper {
+  margin: 40px auto;
+  max-width: 400px;
+  line-height: 2.5;
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
