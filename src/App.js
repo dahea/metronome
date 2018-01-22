@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 
@@ -53,6 +52,7 @@ class Metronome extends Component {
     this.runMetronome = this.runMetronome.bind(this);
     this.changeBpm = this.changeBpm.bind(this);
     this.playClick = this.playClick.bind(this);
+    this.stopClick = this.stopClick.bind(this);
   }
 
   runMetronome(){
@@ -60,34 +60,55 @@ class Metronome extends Component {
       isMetronomeOn: !prevState.isMetronomeOn
     }));
 
-    this.state.clickInterval = (60 / this.state.currentBpm)*1000;
-    var clickPlayer;
+    this.setState({clickInterval: (60 / this.state.currentBpm)*1000});
 
     if (!this.state.isMetronomeOn) {
-      console.log('metronome is playing at '+ this.state.currentBpm + ' which is every '+this.state.clickInterval+' ms');
       this.playClick();
     } 
 
     if (this.state.isMetronomeOn) {
-      console.log('metronome should stop');
-      console.log(clickPlayer);
+      console.log(this.state.clickPlayer);
       this.stopClick();
     } 
   }
 
   playClick(){
-    this.state.clickPlayer = setInterval(function(){console.log('click');}, this.state.clickInterval);
+    console.log('metronome is playing at '+ this.state.currentBpm + ' which is every '+this.state.clickInterval+' ms');
+
+    this.setState((prevState) => {
+      return {clickPlayer: setInterval(function(){console.log('click');}, this.state.clickInterval)};
+    });
   }
 
   stopClick(){
+    console.log('metronome stopped');
     clearInterval(this.state.clickPlayer);
   }
 
   changeBpm(e){
+    const newBpm = e.target.dataset.tempo;
+    const newClickRate = (60 / newBpm)*1000;
+
     console.log(this.state.currentBpm);
-    this.state.currentBpm = e.target.dataset.tempo;
-    this.state.clickInterval = (60 / this.state.currentBpm)*1000;
-    console.log('metronome has been updated to ' + this.state.currentBpm + ' which is every '+this.state.clickInterval+' ms');
+    this.setState((prevState) => {
+      return {currentBpm: newBpm};
+    });
+
+    this.setState((prevState) => {
+      return {clickInterval: newClickRate};
+    });
+
+    if (!this.state.isMetronomeOn) {
+      console.log('metronome is off ' + newBpm);
+    } 
+
+    if (this.state.isMetronomeOn) {
+      clearInterval(this.state.clickPlayer);
+      console.log('prev clicker stopped');
+      this.setState((prevState) => {
+        return {clickPlayer: setInterval(function(){console.log('updated click');}, newClickRate)};
+      });
+    } 
   }
 
   render() {
@@ -96,7 +117,6 @@ class Metronome extends Component {
       <div className="metronome-wrapper">
         <div className="status">
         Metronome is {this.state.isMetronomeOn ? 'On' : 'Off'}<br />
-        {/* and now for some reason this is not working properly. it only updates when start/stop button works, but not when clicking on tempos */}
         bpm is set to: {this.state.currentBpm}
         </div>
         <div className="metronomer">
