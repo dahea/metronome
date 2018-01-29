@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import './App.css';
 
-
 class TempoList extends Component {
 
   render() {
+    const clickAudio = this.props.clickAudio;
     const clickInterval = this.props.clickInterval;
     const setBpm = this.props.setBpm;
     const allBPMs = [40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 63, 66, 69, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 126, 132, 138, 144, 152, 160, 168, 176, 184, 192, 200, 208];
@@ -12,7 +12,7 @@ class TempoList extends Component {
     return (
       <div>
           {allBPMs.map(function(bpm, index){
-            return <Tempos key={index} setBpm={setBpm} bpm={bpm} clickInterval={clickInterval} />;
+            return <Tempos key={index} setBpm={setBpm} bpm={bpm} clickInterval={clickInterval} clickAudio={clickAudio} />;
           })}
       </div>
     )
@@ -21,8 +21,9 @@ class TempoList extends Component {
 
 class Tempos extends Component {
   render() {
+
     return (
-      <button className="tempo-marker" onClick={this.props.setBpm} data-tempo={this.props.bpm} clickInterval={this.props.clickInterval} >
+      <button className="tempo-marker" onClick={this.props.setBpm} data-tempo={this.props.bpm} clickInterval={this.props.clickInterval} clickAudio={this.props.clickAudio} >
         {this.props.bpm}
       </button>
     );
@@ -31,8 +32,9 @@ class Tempos extends Component {
 
 class MetronomeSwitch extends Component {
   render() {
+
     return (
-      <button className="tempo-starter" onClick={this.props.toggleAction} clickInterval={this.props.clickInterval} playClick={this.props.playClick} stopClick={this.stopClick} >
+      <button className="tempo-starter" onClick={this.props.toggleAction} clickInterval={this.props.clickInterval} playClick={this.props.playClick} stopClick={this.stopClick} clickAudio={this.props.clickAudio} >
         {this.props.metronomeState ? 'Stop Metronome' : 'Start Metronome'}
       </button>
     );
@@ -46,8 +48,9 @@ class Metronome extends Component {
     this.state = {
       isMetronomeOn: false,
       currentBpm: 88,
-      clickInterval: 0,
-      clickPlayer: 0
+      clickInterval: 681.8181818181818,
+      clickPlayer: 0,
+      clickAudio: new Audio('./click.mp3')
     };
     this.runMetronome = this.runMetronome.bind(this);
     this.changeBpm = this.changeBpm.bind(this);
@@ -56,6 +59,8 @@ class Metronome extends Component {
   }
 
   runMetronome(){
+    console.log(this.state.clickAudio);
+
     this.setState(prevState => ({
       isMetronomeOn: !prevState.isMetronomeOn
     }));
@@ -73,10 +78,17 @@ class Metronome extends Component {
   }
 
   playClick(){
+  {/* this part works fine! */}
+    console.log(this.state.clickAudio);
+
     console.log('metronome is playing at '+ this.state.currentBpm + ' which is every '+this.state.clickInterval+' ms');
 
     this.setState((prevState) => {
-      return {clickPlayer: setInterval(function(){console.log('click');}, this.state.clickInterval)};
+      return {clickPlayer: setInterval(function(){
+      {/* "this" ends up being the window. need to figure out how to call clickAudio from here */}
+        console.log(this);
+        console.log('click');
+      }, this.state.clickInterval)};
     });
   }
 
@@ -106,7 +118,10 @@ class Metronome extends Component {
       clearInterval(this.state.clickPlayer);
       console.log('prev clicker stopped');
       this.setState((prevState) => {
-        return {clickPlayer: setInterval(function(){console.log('updated click');}, newClickRate)};
+        return {clickPlayer: setInterval(function(){
+          {/* this.state.clickAudio.play(); */}
+          console.log('updated click');
+        }, newClickRate)};
       });
     } 
   }
@@ -120,9 +135,9 @@ class Metronome extends Component {
         bpm is set to: {this.state.currentBpm}
         </div>
         <div className="metronomer">
-          <MetronomeSwitch toggleAction={this.runMetronome} clickInterval={this.state.clickInterval} playClick={this.playClick} stopClick={this.stopClick} metronomeState={this.state.isMetronomeOn} />
+          <MetronomeSwitch toggleAction={this.runMetronome} clickInterval={this.state.clickInterval} playClick={this.playClick} stopClick={this.stopClick} metronomeState={this.state.isMetronomeOn} clickAudio={this.state.clickAudio} />
 
-          <TempoList setBpm={this.changeBpm} clickInterval={this.state.clickInterval} playClick={this.playClick} stopClick={this.stopClick} />
+          <TempoList setBpm={this.changeBpm} clickInterval={this.state.clickInterval} playClick={this.playClick} stopClick={this.stopClick} clickAudio={this.state.clickAudio} />
 
         </div>
       </div>
