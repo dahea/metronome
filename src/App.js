@@ -78,15 +78,14 @@ class Metronome extends Component {
   }
 
   playClick(){
-  {/* this part works fine! */}
-    console.log(this.state.clickAudio);
 
     console.log('metronome is playing at '+ this.state.currentBpm + ' which is every '+this.state.clickInterval+' ms');
-
     this.setState((prevState) => {
+
+      const clickSound = this.state.clickAudio;
+
       return {clickPlayer: setInterval(function(){
-      {/* "this" ends up being the window. need to figure out how to call clickAudio from here */}
-        console.log(this);
+        clickSound.play();
         console.log('click');
       }, this.state.clickInterval)};
     });
@@ -118,8 +117,9 @@ class Metronome extends Component {
       clearInterval(this.state.clickPlayer);
       console.log('prev clicker stopped');
       this.setState((prevState) => {
+        const clickSound = this.state.clickAudio;
         return {clickPlayer: setInterval(function(){
-          {/* this.state.clickAudio.play(); */}
+          clickSound.play();
           console.log('updated click');
         }, newClickRate)};
       });
