@@ -4,7 +4,15 @@
   line-height: 2.5;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.playlist-wrapper {
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	padding: 20px;
+	max-width: 320px;
+	background: #f0f0f0;
+	box-sizing: border-box;
+	border-left: 1px dotted #ccc;
 }
