@@ -5,40 +5,6 @@ import Metronome from './metronome.js';
 
 //--------------------------------------------------------------------------
 
-class PlaylistItem extends Component {
-
-  constructor(props) {
-    super(props)
-    this.state = {
-      songTitle: 'song title',
-      songBpm: 'song bpm rate',
-      songTime: 'song duration in minutes',
-      songBars: 'song duration in bars',
-      songDesc: 'song desc, not required'
-    }
-  }
-
-  deleteItem = () => {
-
-  }
-
-  editItem = () => {
-
-  }
-
-  render() {
-    return (
-      <div>Song details:<br />
-      {this.state.songTitle}<br />
-      {this.state.songBpm}<br />
-      {this.state.songTime}<br />
-      {this.state.songBars}<br />
-      {this.state.songDesc}
-      </div>
-    );
-  }
-}
-
 class Playlist extends Component {
 
   state = {
@@ -57,7 +23,9 @@ class Playlist extends Component {
   }
 
   addPlaylistItem = (e) => {
-    var song = {
+
+    const playlistRef = firebase.database().ref('playlist');
+    const song = {
       songTitle: 'song title',
       songBpm: 'song bpm rate',
       songTime: 'song duration in minutes',
@@ -65,13 +33,7 @@ class Playlist extends Component {
       songDesc: 'song desc, not required'
     };
 
-    console.log(song);
-
-    this.state.songlist.push(song);
-
-    localStorage.setItem("songlist", JSON.stringify(this.state.songlist));
-
-    console.log(this.state.songlist);
+    playlistRef.push(song);
 
   }
 
@@ -103,22 +65,35 @@ class Playlist extends Component {
 
 class PlaylistCollection extends Component {
 
-  // will render all playlists and add playlists
+  createPlaylist = (e) => {
 
+    const playlistCollection = firebase.database().ref('playlistCollection');
+    const playlist = {
+      playlistTitle: 'My playlist',
+      playlistDesc: 'This is a desc of my playlist',
+      songlist: {}
+    };
 
-  createPlaylist = () => {
+    playlistCollection.push(playlist);
 
   }
 
   render() {
+    var playlists
+
+    if (!firebase.database().ref()) {
+      playlists = <Playlist />
+      console.log('playlists already exist');
+
+    } else {
+      playlists = 'You have no playlists. Please add one.';
+    }
+
     return (
       <div className="playlist-wrapper">
-        Eventually, all play lists will show up here.
-        <br />
-        <br />
-        <Playlist />
-        <br />
-        <br />
+        <div className="playlistcollection-wrapper">
+          {playlists}
+        </div>
         <button>Create new playlist</button>
       </div>
     );
@@ -132,7 +107,7 @@ class App extends Component {
     return (
       <div>
         <Metronome />
-        <Playlist />
+        <PlaylistCollection />
       </div>
     );
   }
